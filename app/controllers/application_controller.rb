@@ -18,7 +18,8 @@ class ApplicationController < Sinatra::Base
 
   post '/posts' do
     Post.create(:name => params[:name], :content=>[content])
-    @posts = Post.all? { |e|  }
+    @posts = Post.all
+    erb :index
   end
 
   get '/posts' do
