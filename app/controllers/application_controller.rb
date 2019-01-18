@@ -17,7 +17,7 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/posts' do
-    Post.create(:name => params[:name], :content=>[content])
+    Post.create(:name => params[:name], :content => params[:content])
     @posts = Post.all
 
     erb :index
@@ -25,28 +25,36 @@ class ApplicationController < Sinatra::Base
 
   get '/posts' do
     @posts = Post.all
+
     erb :index
   end
 
   get '/posts/:id' do
     @post = Post.find(params[:id])
-    erb :edit
+    if params.keys.include? "name"
+      Post.update params[:id], name: params[:name], content: params[:content]
+      @post = Post.find(params[:id])
+    end
+
+    erb :show
   end
 
   get '/posts/:id/edit' do
     @post = Post.find(params[:id])
+
     erb :edit
   end
 
   patch '/posts/:id' do
+    Post.update params[:id], name: params[:name], content: params[:content]
     @post = Post.find(params[:id])
-    @post.update(params[:post])
-    redirect to "/posts/#{params[:id]}"
+
+    erb :show
   end
 
-  delete '/posts/:id' do
-    @post = Post.find(params[:id])
-    @post.destroy
-    redirect to '/posts'
+  delete '/posts/:id/delete' do
+    Post.delete params[:id]
+    redirect '/posts'
   end
+
 end
